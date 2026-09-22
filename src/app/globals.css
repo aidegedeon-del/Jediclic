@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   JedicliC — système de design.
+   Parti pris : l'univers familier de la salle de classe ivoirienne — le vert
+   tableau, le papier crème, le stylo rouge de correction — traduit dans un
+   langage d'interface sobre et actuel. Palette resserrée, aucun dégradé
+   criard, aucune ombre violette : la confiance se construit par la
+   régularité, pas par l'effet.
+   ============================================================================ */
+:root {
+  --background: 42 26% 95%;
+  --background-soft: 42 30% 98%;
+  --foreground: 100 10% 13%;
+  --card: 40 28% 99%;
+  --border: 40 18% 85%;
+  --border-strong: 40 16% 76%;
+  --muted: 42 22% 91%;
+  --muted-foreground: 100 7% 42%;
+  --primary: 158 36% 16%;
+  --primary-soft: 158 30% 22%;
+  --primary-foreground: 42 30% 98%;
+  --accent: 4 62% 45%;
+  --accent-soft: 4 55% 95%;
+  --accent-foreground: 42 30% 98%;
+  --success: 122 30% 32%;
+  --success-soft: 122 30% 94%;
+  /* CORRECTION ACCESSIBILITÉ (audit final) : L=40% donnait un contraste de
+     3.76:1 sur --warning-soft, sous le seuil AA 4.5:1 pour texte <18px
+     (badge warning, text-xs font-medium). L=35% remonte à 4.70:1, mesuré
+     par calcul de luminance relative WCAG — sans changer la teinte ni le
+     fond, pour rester visuellement cohérent avec le reste de la palette. */
+  --warning: 34 68% 35%;
+  --warning-soft: 38 70% 94%;
+  --danger: 4 62% 45%;
+  --danger-soft: 4 55% 95%;
+  --ring: 4 62% 45%;
+  --shadow-color: 100 30% 10%;
+}
+
+.dark {
+  --background: 100 14% 8%;
+  --background-soft: 100 14% 10%;
+  --foreground: 42 22% 93%;
+  --card: 100 13% 11%;
+  --border: 100 10% 19%;
+  --border-strong: 100 10% 26%;
+  --muted: 100 10% 15%;
+  --muted-foreground: 42 10% 66%;
+  --primary: 158 28% 58%;
+  --primary-soft: 158 26% 50%;
+  --primary-foreground: 100 14% 8%;
+  --accent: 6 68% 62%;
+  --accent-soft: 6 40% 18%;
+  --accent-foreground: 100 14% 8%;
+  --success: 122 22% 58%;
+  --success-soft: 122 25% 16%;
+  --warning: 38 72% 60%;
+  --warning-soft: 38 45% 16%;
+  --danger: 6 68% 62%;
+  --danger-soft: 6 40% 18%;
+  --ring: 6 68% 62%;
+  --shadow-color: 0 0% 0%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-voice {
+  font-family: var(--font-fraunces), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+.font-data {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  letter-spacing: -0.01em;
+}
+
+/* Filet rouge de marge — le geste graphique signature du produit, hérité de
+   la correction manuscrite. Réservé à ce qui est actif ou qui compte
+   vraiment : jamais un simple élément décoratif répété partout. */
+.marge {
+  border-left: 3px solid hsl(var(--accent));
+}
+
+/* Grain papier très discret — perceptible sans être vu, pour éviter le
+   à-plat numérique trop lisse qui trahit une interface générée. */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(hsl(var(--foreground) / 0.05) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
+}
+
+/* Ombres douces, à peine perceptibles — jamais de halo coloré. */
+.shadow-soft {
+  box-shadow: 0 1px 2px hsl(var(--shadow-color) / 0.04), 0 4px 14px hsl(var(--shadow-color) / 0.06);
+}
+.shadow-soft-lg {
+  box-shadow: 0 2px 4px hsl(var(--shadow-color) / 0.05), 0 12px 32px hsl(var(--shadow-color) / 0.09);
+}
+
+/* Ligne de cahier — utilisée avec parcimonie derrière un bloc de mise en
+   avant (hero), jamais comme fond général d'une page applicative. */
+.ruled-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 35px,
+    hsl(var(--border)) 35px,
+    hsl(var(--border)) calc(35px + 1px)
+  );
+}
+
+.tap-highlight-none {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background-color: hsl(var(--accent) / 0.18);
+}
+
+/* ============================================================================
+   Accessibilité — focus visible (WCAG 2.4.7, 2.4.11, 2.4.13)
+   Garantit un indicateur de focus clairement perceptible sur TOUS les éléments
+   interactifs natifs non stylisés par Tailwind (ex. : <details><summary>).
+   ============================================================================ */
+
+/* Réinitialise le focus natif du navigateur seulement si le focus vient du
+   clavier (pas du clic), en conservant l'indicateur Tailwind focus-visible. */
+:focus-visible {
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 2px;
+}
+
+/* Supprime l'outline par défaut sur les clics souris pour les éléments qui
+   le gèrent déjà via Tailwind focus-visible: */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================================================
+   Accessibilité — réduction de mouvement (WCAG 2.3.3)
+   Respecte la préférence système prefers-reduced-motion.
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   Utilitaire sr-only — texte visible uniquement pour les lecteurs d'écran
+   (WCAG 1.3.1, 4.1.2)
+   ============================================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Annule sr-only quand l'élément est focusé (skip-links, etc.) */
+.focus\:not-sr-only:focus,
+.sr-only.focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: revert;
+  margin: revert;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+}
+
+/* Responsive safeguards for dense pedagogical data. */
+@media (max-width: 767px) {
+  body { overflow-x: hidden; }
+  input, select, textarea, button { max-width: 100%; }
+  table { min-width: 36rem; }
+  [data-mobile-stack] { flex-direction: column !important; align-items: stretch !important; }
+}

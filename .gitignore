@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env*.local
+*.log
+npm-debug.log*
+tsconfig.tsbuildinfo
+next-env.d.ts
+.DS_Store
+*.pem
+.vercel
+supabase/.branches
+supabase/.temp
+core
