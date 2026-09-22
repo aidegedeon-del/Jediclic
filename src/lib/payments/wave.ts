@@ -13,14 +13,22 @@ import { getOrgLicenseStatus } from "@/lib/subscriptions/quota";
 
 export interface WaveInstructions {
   configured: boolean;
+  link: string | null;
   phone: string | null;
   name: string | null;
 }
 
+// CORRECTION (22 sept. 2026, demande explicite de l'utilisateur) : bascule
+// vers un lien de paiement Wave Business (généré depuis l'app Wave
+// Business, cliqué directement par l'enseignant) plutôt qu'un virement
+// manuel vers un numéro. WAVE_PAYMENT_LINK devient la méthode principale ;
+// WAVE_PAYMENT_PHONE/WAVE_PAYMENT_NAME restent lus en repli si le lien
+// n'est pas encore configuré, pour ne rien casser en transition.
 export function getWaveInstructions(): WaveInstructions {
+  const link = process.env.WAVE_PAYMENT_LINK || null;
   const phone = process.env.WAVE_PAYMENT_PHONE || null;
   const name = process.env.WAVE_PAYMENT_NAME || null;
-  return { configured: !!phone, phone, name };
+  return { configured: !!link || !!phone, link, phone, name };
 }
 
 export interface SubmitWavePaymentInput {

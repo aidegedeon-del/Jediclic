@@ -251,7 +251,22 @@ export default async function EtablissementPage() {
 
               {!pendingSubmission && (plans ?? []).length > 0 && (
                 <form action={submitEstablishmentWavePayment} className="space-y-3 text-sm">
-                  {wave.configured ? (
+                  {wave.link ? (
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground">
+                        Cliquez sur le bouton ci-dessous pour payer le montant du plan choisi via Wave, puis
+                        cliquez sur « J&apos;ai payé ».
+                      </p>
+                      <a
+                        href={wave.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+                      >
+                        Payer via Wave
+                      </a>
+                    </div>
+                  ) : wave.configured ? (
                     <p className="text-muted-foreground">
                       Envoyez le montant du plan choisi sur Wave au {wave.name ? `compte ${wave.name} — ` : ""}
                       <strong className="text-foreground">{wave.phone}</strong>, puis cliquez sur « J&apos;ai payé ».

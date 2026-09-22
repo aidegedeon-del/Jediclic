@@ -104,7 +104,23 @@ export default async function AbonnementPage() {
             <CardDescription>Simple, rapide, sans carte bancaire.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
-            {wave.configured ? (
+            {wave.link ? (
+              <div className="space-y-2">
+                <p className="flex items-start gap-1.5 text-foreground">
+                  <ShieldCheck size={15} className="mt-0.5 shrink-0 text-success" />
+                  Cliquez sur le bouton ci-dessous pour payer le montant du plan choisi via Wave, puis revenez ici
+                  cliquer sur « J&apos;ai payé ».
+                </p>
+                <a
+                  href={wave.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+                >
+                  Payer via Wave
+                </a>
+              </div>
+            ) : wave.configured ? (
               <p className="flex items-start gap-1.5 text-foreground">
                 <ShieldCheck size={15} className="mt-0.5 shrink-0 text-success" />
                 Envoyez le montant du plan choisi sur Wave au {wave.name ? `compte ${wave.name} — ` : ""}
