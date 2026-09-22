@@ -380,7 +380,7 @@ export async function sendAssistantMessage(formData: FormData) {
     // CORRECTION : Message d'erreur plus informatif pour distinguer les erreurs
     // de configuration des erreurs métier
     const errMsg = e instanceof Error ? e.message : "erreur inconnue";
-    if (errMsg.includes("ANTHROPIC_API_KEY")) {
+    if (errMsg.includes("GEMINI_API_KEY")) {
       reply = "Le service de génération IA n'est pas configuré. Contactez l'administrateur.";
     } else {
       reply = `Une erreur est survenue : ${errMsg}.`;
