@@ -11,7 +11,11 @@
 // 22 sept. 2026) : niveau gratuit sans carte bancaire, quota quotidien
 // suffisant pour le démarrage. Le modèle reste configurable via
 // GEMINI_MODEL si besoin de changer sans toucher au code.
-const DEFAULT_MODEL = "gemini-2.0-flash";
+//
+// CORRECTION (24 sept. 2026) : gemini-2.0-flash a été retiré par Google
+// ("This model models/gemini-2.0-flash is no longer available"), remplacé
+// par gemini-3.6-flash (stable depuis juillet 2026, même API generateContent).
+const DEFAULT_MODEL = "gemini-3.6-flash";
 
 // Forme minimale de la réponse de l'API Gemini generateContent, pour éviter
 // tout `any` implicite sur `response.json()` ci-dessous.
