@@ -15,10 +15,13 @@ import { createClient } from "@/lib/supabase/server";
 // Modèle établissement (migration 0024, décision explicite de l'utilisateur) :
 // aucun plafond de sièges — un établissement paie `plan.price_minor_units`
 // par enseignant réellement inscrit (accepté ou invité en attente), chaque
-// mois (`is_per_seat = true`). Aucune offre, individuelle ou établissement,
-// ne comporte d'essai gratuit : un abonnement démarre directement avec un
-// paiement dû (`status: 'past_due'`), jamais `'trialing'`.
-const USABLE_STATUSES = ["active", "past_due"] as const;
+// mois (`is_per_seat = true`).
+//
+// CORRECTION (22 sept. 2026, décision explicite de l'utilisateur, renverse
+// 0024) : chaque organisation démarre désormais avec un essai gratuit de 14
+// jours (`status: 'trialing'`, cf. migration 0042), qui donne les mêmes
+// droits qu'un abonnement actif. 'trialing' est donc inclus ici.
+const USABLE_STATUSES = ["active", "past_due", "trialing"] as const;
 
 export interface LicenseStatus {
   hasSubscription: boolean;

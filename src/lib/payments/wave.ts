@@ -225,7 +225,7 @@ export async function submitDisciplineAdditionPayment(input: SubmitDisciplineAdd
     .from("subscriptions")
     .select("plans(billing_period)")
     .eq("organization_id", input.organizationId)
-    .in("status", ["active", "past_due"])
+    .in("status", ["active", "past_due", "trialing"])
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -415,7 +415,7 @@ export async function confirmWavePayment(submissionId: string, adminUserId: stri
     .from("subscriptions")
     .select("id")
     .eq("organization_id", submission.organization_id)
-    .in("status", ["active", "past_due"])
+    .in("status", ["active", "past_due", "trialing"])
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();

@@ -52,11 +52,6 @@ export function computeRenewalReminder(subscription: {
   return { daysRemaining, currentPeriodEnd: subscription.current_period_end };
 }
 
-
-// Ne bloque QUE si un abonnement a déjà existé et n'est plus utilisable —
-// une organisation qui n'a encore jamais payé (pas de ligne `subscriptions`)
-// garde le comportement actuel (accès au dashboard, quota qui empêche
-// simplement d'inviter/utiliser certaines fonctionnalités).
 export async function getRenewalReminder(organizationId: string): Promise<RenewalReminder | null> {
   const supabase = await createClient();
   const { data: subscription } = await supabase
@@ -70,6 +65,13 @@ export async function getRenewalReminder(organizationId: string): Promise<Renewa
   return computeRenewalReminder(subscription);
 }
 
+// CORRECTION (22 sept. 2026, décision explicite de l'utilisateur, renverse
+// le commentaire précédent) : chaque organisation reçoit désormais un
+// abonnement d'essai de 14 jours à sa création (migration 0042, trigger
+// `create_trial_subscription`). L'absence totale de ligne `subscriptions`
+// est donc anormale (essai jamais créé, plan introuvable au moment de la
+// création) et doit bloquer l'accès au même titre qu'un essai/abonnement
+// expiré, plutôt que de laisser un accès illimité par défaut.
 export async function getAccessGateStatus(
   organizationId: string,
   membershipId: string
@@ -91,7 +93,7 @@ export async function getAccessGateStatus(
     return { blocked: true, reason: "seat_payment_pending" };
   }
 
-  if (subscription && subscription.status === "expired") {
+  if (!subscription || subscription.status === "expired") {
     return { blocked: true, reason: "org_expired" };
   }
 
