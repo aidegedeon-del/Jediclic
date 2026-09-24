@@ -21,9 +21,17 @@ export default async function AssessmentDetailPage({ params }: { params: Promise
     <p className="text-sm text-muted-foreground" role="alert">Évaluation introuvable.</p>
   );
 
-  const [{ data: students }, { data: results }] = await Promise.all([
+  const [{ data: students }, { data: results }, { data: questions }] = await Promise.all([
     supabase.from("students").select("id, full_name").eq("class_id", assessment.classes!.id).is("archived_at", null).order("full_name"),
     supabase.from("results").select("student_id, score, is_absent").eq("assessment_id", id),
+    // CORRECTION (24 sept. 2026) : le sujet (questions + corrections) généré
+    // n'était jamais affiché une fois le brouillon accepté — cette page ne
+    // montrait que les infos administratives et la saisie des notes.
+    supabase
+      .from("assessment_questions")
+      .select("id, statement, max_points, ordering, exercise_id, exercises(correction)")
+      .eq("assessment_id", id)
+      .order("ordering"),
   ]);
 
   const resultByStudent = new Map((results ?? []).map((r) => [r.student_id, r]));
@@ -51,6 +59,33 @@ export default async function AssessmentDetailPage({ params }: { params: Promise
           {assessment.published ? "Publiée — comptée dans les moyennes" : "Brouillon — invisible dans les moyennes"}
         </Badge>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Sujet</CardTitle>
+          <CardDescription>Questions et corrections de cette évaluation.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {(questions ?? []).map((q, i) => (
+            <div key={q.id} className="rounded-lg border border-border-strong p-3 space-y-1.5 text-sm">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Question {i + 1}</span>
+                <span>/{q.max_points}</span>
+              </div>
+              <p className="whitespace-pre-wrap text-foreground">{q.statement}</p>
+              {q.exercises?.correction && (
+                <div className="mt-1.5 rounded-md bg-background-soft p-2">
+                  <p className="text-xs font-medium text-muted-foreground">Correction</p>
+                  <p className="whitespace-pre-wrap text-xs text-muted-foreground">{q.exercises.correction}</p>
+                </div>
+              )}
+            </div>
+          ))}
+          {(!questions || questions.length === 0) && (
+            <p className="text-sm text-muted-foreground">Aucun sujet enregistré pour cette évaluation.</p>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
